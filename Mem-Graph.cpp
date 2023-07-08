@@ -2,19 +2,31 @@
 //
 
 #include <iostream>
+#include "GraphStorage.h"
+#include <random>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    using namespace MemGraph;
+    GraphStorage gs;
+    std::random_device rd;  // a seed source for the random number engine
+    std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> distrib(0, 99'999);
+    
+    try {
+
+        for (uint32_t idx = 0; idx < 100'000; idx++)
+        {
+            Vertex::VERTEX_ID vId = gs.CreateVertex();
+            gs.AddLabel(vId, Label("A"));
+        }
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+    for (uint32_t idx = 0; idx < 100'000; idx++)
+    {
+        gs.CreateEdge(idx, distrib(gen));
+    }
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

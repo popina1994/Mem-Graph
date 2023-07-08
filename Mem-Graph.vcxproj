@@ -130,12 +130,14 @@
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="GraphStorage.cpp" />
     <ClCompile Include="Mem-Graph.cpp" />
+    <ClCompile Include="NoVertexException.h" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Edge.h" />
     <ClInclude Include="GraphStorage.h" />
     <ClInclude Include="Label.h" />
+    <ClInclude Include="NoLabelException.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
