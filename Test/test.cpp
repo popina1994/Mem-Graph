@@ -53,5 +53,9 @@ TEST(TestingBasicFunctionality, ShortestPath) {
     EXPECT_EQ(gs.ExistsEdge(1, 2), true);
     EXPECT_EQ(gs.ExistsEdge(2, 3), true);
 
-    gs.ShortestPath(0, 3, { "A" });
+    auto v = gs.ShortestPath(0, 3, { "A" });
+    EXPECT_EQ(v[0], 0);
+    EXPECT_EQ(v[1], 1);
+    EXPECT_EQ(v[2], 2);
+    EXPECT_EQ(v[3], 3);
 }

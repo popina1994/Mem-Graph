@@ -15,7 +15,8 @@ namespace MemGraph
 		typedef uint32_t VERTEX_ID;
 	private:
 		std::unordered_set<Label> m_sLabels;
-		std::unordered_set<VERTEX_ID> m_vAdjVertices;
+		std::unordered_set<VERTEX_ID> m_vToAdjVertices;
+		std::unordered_set<VERTEX_ID> m_vFromAdjVertices;
 	public:
 
 		void AddLabel(const Label& label)
@@ -32,9 +33,14 @@ namespace MemGraph
 			m_sLabels.erase(label);
 		}
 
-		void AddEdge(const VERTEX_ID& vId)
+		void AddToEdge(const VERTEX_ID& vId)
 		{
-			m_vAdjVertices.insert(vId);
+			m_vToAdjVertices.insert(vId);
+		}
+
+		void AddFromEdge(const VERTEX_ID & vId)
+		{
+			m_vFromAdjVertices.insert(vId);
 		}
 
 		bool HasLabel(const Label& label) const
@@ -44,12 +50,17 @@ namespace MemGraph
 
 		bool HasEdge(const VERTEX_ID& vId) const
 		{
-			return m_vAdjVertices.find(vId) != m_vAdjVertices.end();
+			return m_vToAdjVertices.find(vId) != m_vToAdjVertices.end();
 		}
 
-		const std::unordered_set<VERTEX_ID>& GetAdjVertices(void) const
+		const std::unordered_set<VERTEX_ID>& GetToAdjVertices(void) const
 		{
-			return m_vAdjVertices;
+			return m_vToAdjVertices;
+		}
+
+		const std::unordered_set<VERTEX_ID>& GetFromAdjVertices(void) const
+		{
+			return m_vFromAdjVertices;
 		}
 		
 	};
