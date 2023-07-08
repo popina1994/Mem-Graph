@@ -109,7 +109,12 @@ namespace MemGraph
 		}
 
 
-		std::vector<Vertex::VERTEX_ID> ShortestPath(const Vertex::VERTEX_ID& vertIdStrt, const Vertex::VERTEX_ID& vertIdEnd, const Label& lab, 
+		/**
+		* @brief Returns the shortest path between two vertices @par vertIdStart and @par vertIdEnd such that vertices on the way contain @par lab. 
+		* @note Potential exception: std::bad_alloc, MemGraph::NoVertexException.
+		*/
+		std::vector<Vertex::VERTEX_ID> ShortestPath(const Vertex::VERTEX_ID& vertIdStrt, const Vertex::VERTEX_ID& vertIdEnd, 
+			const Label& label, 
 			const ShortPathSearches& sps = ShortPathSearches::BFS) const
 		{
 			std::vector<uint32_t> vVisitStep(m_vVertices.size(), -1);
@@ -148,11 +153,16 @@ namespace MemGraph
 					for (const Vertex::VERTEX_ID& nextVertId:  curVertAdjEdgs)
 					{
 						// Visited
-						if (vVisitStep[nextVertId] == -1)
+						if (!m_vVertices[nextVertId]->HasLabel(label))
 						{
-							lVisit.push_back(nextVertId);
-							vVisitStep[nextVertId] = curStep + 1; 
+							continue;
 						}
+						if (vVisitStep[nextVertId] != -1)
+						{
+							continue;
+						}
+						lVisit.push_back(nextVertId);
+						vVisitStep[nextVertId] = curStep + 1; 
 					}
 				}
 				// Trace back the path.

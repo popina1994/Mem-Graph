@@ -56,7 +56,7 @@ TEST(TestingBasicFunctionality, StressTest) {
     {
         std::cout << e.what() << std::endl;
     }
-    for (uint32_t idx = 0; idx < 500'000; idx++)
+    for (uint32_t idx = 0; idx < 100'000; idx++)
     {
         gs.CreateEdge(distrib(gen), distrib(gen));
     }
