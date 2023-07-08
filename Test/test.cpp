@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "../GraphStorage.h"
 #include <random>
-
+#include <chrono>
 
 TEST(TestingBasicFunctionality, BasicFunctionality) {
     using namespace MemGraph;
@@ -34,9 +34,15 @@ TEST(TestingBasicFunctionality, BasicFunctionality) {
     EXPECT_EQ(v[1], 1);
     EXPECT_EQ(v[2], 2);
     EXPECT_EQ(v[3], 3);
+
+    v = gs.ShortestPath(0, 0, { "A" });
+    EXPECT_EQ(v.size(), 0);
+
+    v = gs.ShortestPath(0, 3, { "B" });
+    EXPECT_EQ(v.size(), 0);
 }
 
-TEST(TestingBasicFunctionality, StressTest) {
+TEST(TestingBasicFunctionality, StressTestRequirement) {
     using namespace MemGraph;
     GraphStorage gs;
     std::random_device rd;  // a seed source for the random number engine
@@ -44,17 +50,10 @@ TEST(TestingBasicFunctionality, StressTest) {
     std::uniform_int_distribution<> distrib(0, 99'999);
     std::uniform_int_distribution<> dist2(0, 1);
 
-    try {
-
-        for (uint32_t idx = 0; idx < 100'000; idx++)
-        {
-            Vertex::VERTEX_ID vId = gs.CreateVertex();
-            gs.AddLabel(vId, Label("A"));
-        }
-    }
-    catch (std::exception& e)
+    for (uint32_t idx = 0; idx < 100'000; idx++)
     {
-        std::cout << e.what() << std::endl;
+        Vertex::VERTEX_ID vId = gs.CreateVertex();
+        gs.AddLabel(vId, Label("A"));
     }
     for (uint32_t idx = 0; idx < 100'000; idx++)
     {
@@ -68,3 +67,80 @@ TEST(TestingBasicFunctionality, StressTest) {
         auto v = gs.ShortestPath(vertStart, vertEnd, { "A" });
     }
 }
+
+TEST(TestingBasicFunctionality, StressTestCompleteGraph) {
+    using namespace MemGraph;
+    GraphStorage gs;
+    std::random_device rd;  // a seed source for the random number engine
+    std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
+    constexpr uint32_t NUM_NODES = 100;
+    std::uniform_int_distribution<> distrib(0, NUM_NODES);
+    std::uniform_int_distribution<> dist2(0, 1);
+
+    for (uint32_t idx = 0; idx < NUM_NODES; idx++)
+    {
+        Vertex::VERTEX_ID vId = gs.CreateVertex();
+        gs.AddLabel(vId, Label("A"));
+    }
+    for (uint32_t idx1 = 0; idx1 < NUM_NODES; idx1++)
+    {
+        for (uint32_t idx2 = 0; idx2 < NUM_NODES; idx2++)
+        {
+            gs.CreateEdge(idx1, idx2);
+        }
+    }
+
+    for (uint32_t idx1 = 0; idx1 < NUM_NODES; idx1++)
+    {
+        for (uint32_t idx2 = 0; idx2 < NUM_NODES; idx2++)
+        {
+            auto v = gs.ShortestPath(idx1, idx2, { "A" });
+            EXPECT_EQ(v.size(), 2);
+            EXPECT_EQ(v[0], idx1);
+            EXPECT_EQ(v[1], idx2);
+        }
+    }
+}
+
+
+TEST(TestingBasicFunctionality, StressTestPathGraph) {
+    using namespace MemGraph;
+    GraphStorage gs;
+    std::random_device rd;  // a seed source for the random number engine
+    std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
+    constexpr uint32_t NUM_NODES = 100'000;
+    std::uniform_int_distribution<> distrib(0, NUM_NODES);
+    std::uniform_int_distribution<> dist2(0, 1);
+    using namespace std::chrono;
+
+    
+    auto start = std::chrono::high_resolution_clock::now();
+    for (uint32_t idx = 0; idx < NUM_NODES; idx++)
+    {
+        Vertex::VERTEX_ID vId = gs.CreateVertex();
+        gs.AddLabel(vId, Label("A"));
+    }
+    
+    for (uint32_t idx1 = 0; idx1 < NUM_NODES - 1; idx1++)
+    {
+        gs.CreateEdge(idx1, idx1 + 1);
+    }
+
+    
+    
+    for (uint32_t idx1 = 0; idx1 < 10; idx1++)
+    {
+        for (uint32_t idx2 = NUM_NODES - 10; idx2 < NUM_NODES; idx2++)
+        {
+            auto v = gs.ShortestPath(idx1, idx2, { "A" });
+            //EXPECT_EQ(v.size(), idx2 - idx1 + 1);
+            //EXPECT_EQ(v.size(), 0);
+        }
+    }
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+    EXPECT_EQ(duration.count() < 10300, true);
+}
+
+
