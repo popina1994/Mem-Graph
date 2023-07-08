@@ -126,15 +126,12 @@ TEST(TestingBasicFunctionality, StressTestPathGraph) {
         gs.CreateEdge(idx1, idx1 + 1);
     }
 
-    
-    
     for (uint32_t idx1 = 0; idx1 < 10; idx1++)
     {
         for (uint32_t idx2 = NUM_NODES - 10; idx2 < NUM_NODES; idx2++)
         {
             auto v = gs.ShortestPath(idx1, idx2, { "A" });
-            //EXPECT_EQ(v.size(), idx2 - idx1 + 1);
-            //EXPECT_EQ(v.size(), 0);
+            EXPECT_EQ(v.size(), idx2 - idx1 + 1);
         }
     }
 

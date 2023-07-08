@@ -123,6 +123,7 @@ namespace MemGraph
 			std::vector<uint32_t> vVisitStep(m_vVertices.size(), 0);
 			std::vector<Vertex::VERTEX_ID> vPath;
 			std::vector<Vertex::VERTEX_ID> qVisit(m_vVertices.size(), -1);
+			std::vector<Vertex::VERTEX_ID> vOrigVertex(m_vVertices.size(), -1);
 			uint32_t curIdx = 0;
 			uint32_t pathLength = 0;
 			bool thereIsPath = false;
@@ -135,7 +136,6 @@ namespace MemGraph
 			{
 				throw NoVertexException(vertIdEnd);
 			}
-			
 
 			if (sps == ShortPathSearches::BFS)
 			{
@@ -164,6 +164,7 @@ namespace MemGraph
 						{
 							qVisit.push(nextVertId);
 							vVisitStep[nextVertId] = curStep + 1;
+							vOrigVertex[nextVertId] = curVertId;
 						}
 					}
 				}
@@ -181,16 +182,7 @@ namespace MemGraph
 			for (int cnt = 0; cnt < pathLength; cnt++)
 			{
 				vPath[pathLength - cnt] = curVertId;
-				const auto& curVertPrevAdjEdgs = m_vVertices[curVertId]->GetFromAdjVertices();
-				for (const Vertex::VERTEX_ID& vertBefId : curVertPrevAdjEdgs)
-				{
-					if (vVisitStep[vertBefId] == curStep - 1)
-					{
-						curVertId = vertBefId;
-						curStep--;
-						break;
-					}
-				}
+				curVertId = vOrigVertex[curVertId];
 			}
 			vPath[0] = vertIdStrt;
 			
