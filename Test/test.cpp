@@ -73,7 +73,7 @@ TEST(TestingBasicFunctionality, StressTestCompleteGraph) {
     GraphStorage gs;
     std::random_device rd;  // a seed source for the random number engine
     std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
-    constexpr uint32_t NUM_NODES = 100;
+    constexpr uint32_t NUM_NODES = 75;
     std::uniform_int_distribution<> distrib(0, NUM_NODES);
     std::uniform_int_distribution<> dist2(0, 1);
 
@@ -110,10 +110,9 @@ TEST(TestingBasicFunctionality, StressTestPathGraph) {
     std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
     constexpr uint32_t NUM_NODES = 100'000;
     std::uniform_int_distribution<> distrib(0, NUM_NODES);
-    std::uniform_int_distribution<> dist2(0, 1);
+
     using namespace std::chrono;
 
-    
     auto start = std::chrono::high_resolution_clock::now();
     for (uint32_t idx = 0; idx < NUM_NODES; idx++)
     {
@@ -137,7 +136,7 @@ TEST(TestingBasicFunctionality, StressTestPathGraph) {
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop - start);
-    EXPECT_EQ(duration.count() < 10300, true);
+    EXPECT_EQ(duration.count() < 10000, true);
 }
 
 

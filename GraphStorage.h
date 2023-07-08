@@ -81,7 +81,6 @@ namespace MemGraph
 				throw NoVertexException(v2Id);
 			}
 			m_vVertices[v1Id]->AddToEdge(v2Id);
-			m_vVertices[v2Id]->AddFromEdge(v1Id);
 		}
 
 		/**
@@ -185,7 +184,6 @@ namespace MemGraph
 				curVertId = vOrigVertex[curVertId];
 			}
 			vPath[0] = vertIdStrt;
-			
 			
 			return vPath;
 		}
