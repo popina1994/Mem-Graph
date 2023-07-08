@@ -2,7 +2,6 @@
 #include <string>
 namespace MemGraph
 {
-
     class Label
     {
         std::string m_labelName;

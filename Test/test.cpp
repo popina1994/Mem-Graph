@@ -26,3 +26,32 @@ TEST(TestingBasicFunctionality, VertexCreation) {
         gs.CreateEdge(idx, distrib(gen));
     }
 }
+
+TEST(TestingBasicFunctionality, ShortestPath) {
+    using namespace MemGraph;
+    GraphStorage gs;
+    EXPECT_EQ(gs.CreateVertex(), 0);
+    EXPECT_EQ(gs.CreateVertex(), 1);
+    EXPECT_EQ(gs.CreateVertex(), 2);
+    EXPECT_EQ(gs.CreateVertex(), 3);
+
+    gs.AddLabel(0, Label("A"));
+    gs.AddLabel(1, Label("A"));
+    gs.AddLabel(2, Label("A"));
+    gs.AddLabel(3, Label("A"));
+
+    EXPECT_EQ(gs.VertexHasLabel(0, { "A" }), true);
+    EXPECT_EQ(gs.VertexHasLabel(1, { "A" }), true);
+    EXPECT_EQ(gs.VertexHasLabel(2, { "A" }), true);
+    EXPECT_EQ(gs.VertexHasLabel(3, { "A" }), true);
+
+    gs.CreateEdge(0, 1);
+    gs.CreateEdge(1, 2);
+    gs.CreateEdge(2, 3);
+
+    EXPECT_EQ(gs.ExistsEdge(0, 1), true);
+    EXPECT_EQ(gs.ExistsEdge(1, 2), true);
+    EXPECT_EQ(gs.ExistsEdge(2, 3), true);
+
+    gs.ShortestPath(0, 3, { "A" });
+}

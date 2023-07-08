@@ -46,5 +46,11 @@ namespace MemGraph
 		{
 			return m_vAdjVertices.find(vId) != m_vAdjVertices.end();
 		}
+
+		const std::unordered_set<VERTEX_ID>& GetAdjVertices(void) const
+		{
+			return m_vAdjVertices;
+		}
+		
 	};
 }
