@@ -1,18 +1,25 @@
 #pragma once
-#include "Vertex.h"
+
+#include "Type.h"
 
 namespace MemGraph
 {
+	/**
+	* @brief Stores the end to which the edge is pointed to.
+	*/
 	class Edge
 	{
-		Vertex::VERTEX_ID m_vId;
+		Type::VERTEX_ID m_vId;
 
 	public:
-		Edge(const Vertex::VERTEX_ID& vId): m_vId(vId){}
-		const Vertex::VERTEX_ID& getVertexId(void) const
+		Edge(const Type::VERTEX_ID& vId): m_vId(vId){}
+		
+		/**
+		* @brief Return the vertex id.
+		*/
+		const Type::VERTEX_ID& GetVertexId(void)
 		{
 			return m_vId;
 		}
-		// Weight
 	};
 }

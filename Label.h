@@ -2,6 +2,11 @@
 #include <string>
 namespace MemGraph
 {
+    /**
+    * @brief Class that wraps Label. 
+    * In future the code can be restructured so different instances of label class are either specified by templates
+    * or derived from some base empty class.
+    */
     class Label
     {
         std::string m_labelName;

@@ -17,7 +17,7 @@ int main()
 
         for (uint32_t idx = 0; idx < 100'000; idx++)
         {
-            Vertex::VERTEX_ID vId = gs.CreateVertex();
+            Type::VERTEX_ID vId = gs.CreateVertex();
             gs.AddLabel(vId, Label("A"));
         }
     }

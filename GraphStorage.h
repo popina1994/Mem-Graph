@@ -26,7 +26,7 @@ namespace MemGraph
 		/**
 		* @brief Returns true if the vertex @par vId exists. 
 		*/
-		bool ExistsVertex(const Vertex::VERTEX_ID& vId) const
+		bool ExistsVertex(const Type::VERTEX_ID& vId) const
 		{
 			return vId < m_vVertices.size();
 		}
@@ -34,7 +34,7 @@ namespace MemGraph
 		/**
 		* @brief Returns true if the vertex @par vId has the label @par label, otherwise false.
 		*/
-		bool VertexHasLabel(const Vertex::VERTEX_ID& vId, const Label& label) const
+		bool VertexHasLabel(const Type::VERTEX_ID& vId, const Label& label) const
 		{
 			if (!ExistsVertex(vId))
 			{
@@ -46,7 +46,7 @@ namespace MemGraph
 		/**
 		* @brief Returns true if there is an edge with (@par vId1, @par vId2).
 		*/
-		bool ExistsEdge(const Vertex::VERTEX_ID& vId1, const Vertex::VERTEX_ID& vId2) const
+		bool ExistsEdge(const Type::VERTEX_ID& vId1, const Type::VERTEX_ID& vId2) const
 		{
 			if (!ExistsVertex(vId1) || !ExistsVertex(vId2))
 			{
@@ -59,7 +59,7 @@ namespace MemGraph
 		* @brief Creates a vertex in Graph Store where the vertex id is returned.
 		* @note Potential exception: std::bad_alloc. 
 		*/
-		Vertex::VERTEX_ID CreateVertex()
+		Type::VERTEX_ID CreateVertex()
 		{
 			std::unique_ptr<Vertex> pVert = std::make_unique<Vertex>();
 			m_vVertices.emplace_back(std::move(pVert));
@@ -70,7 +70,7 @@ namespace MemGraph
 		* @brief Creates an edge in Graph Store.
 		* @note Potential exception: std::bad_alloc and MemGraph::NoVertexException.  
 		*/
-		void CreateEdge(const Vertex::VERTEX_ID& v1Id, const Vertex::VERTEX_ID& v2Id)
+		void CreateEdge(const Type::VERTEX_ID& v1Id, const Type::VERTEX_ID& v2Id)
 		{
 			if (!ExistsVertex(v1Id))
 			{
@@ -87,7 +87,7 @@ namespace MemGraph
 		* @brief Adds the label @par label to the existing vertex in the graph store.
 		* @note Potential exception: std::bad_alloc and MemGraph::NoVertexException. 
 		*/
-		void AddLabel(const Vertex::VERTEX_ID& vId, const Label& label)
+		void AddLabel(const Type::VERTEX_ID& vId, const Label& label)
 		{
 			if (!ExistsVertex(vId))
 			{
@@ -100,7 +100,7 @@ namespace MemGraph
 		* @brief Removes the label @par label from the existing vertex in the graph store.
 		* @note Potential exception: std::bad_alloc, MemGraph::NoVertexException and MemGraph::NoLabelException.
 		*/
-		void RemoveLabel(const Vertex::VERTEX_ID& vId, const Label& label)
+		void RemoveLabel(const Type::VERTEX_ID& vId, const Label& label)
 		{
 			if (!ExistsVertex(vId))
 			{
@@ -114,15 +114,15 @@ namespace MemGraph
 		* @brief Returns the shortest path between two vertices @par vertIdStart and @par vertIdEnd such that vertices on the way contain @par lab. 
 		* @note Potential exception: std::bad_alloc, MemGraph::NoVertexException.
 		*/
-		std::vector<Vertex::VERTEX_ID> ShortestPath(const Vertex::VERTEX_ID& vertIdStrt, const Vertex::VERTEX_ID& vertIdEnd, 
+		std::vector<Type::VERTEX_ID> ShortestPath(const Type::VERTEX_ID& vertIdStrt, const Type::VERTEX_ID& vertIdEnd, 
 			const Label& label, 
 			const ShortPathSearches& sps = ShortPathSearches::BFS) const
 		{
 			using namespace std::chrono;
 			std::vector<uint32_t> vVisitStep(m_vVertices.size(), 0);
-			std::vector<Vertex::VERTEX_ID> vPath;
-			std::vector<Vertex::VERTEX_ID> qVisit(m_vVertices.size(), -1);
-			std::vector<Vertex::VERTEX_ID> vOrigVertex(m_vVertices.size(), -1);
+			std::vector<Type::VERTEX_ID> vPath;
+			std::vector<Type::VERTEX_ID> qVisit(m_vVertices.size(), -1);
+			std::vector<Type::VERTEX_ID> vOrigVertex(m_vVertices.size(), -1);
 			uint32_t curIdx = 0;
 			uint32_t pathLength = 0;
 			bool thereIsPath = false;
@@ -139,12 +139,12 @@ namespace MemGraph
 			if (sps == ShortPathSearches::BFS)
 			{
 				// Apply BFS to index the shortest distance of each node from the starting node. 
-				std::queue<Vertex::VERTEX_ID> qVisit;
+				std::queue<Type::VERTEX_ID> qVisit;
 				qVisit.push(vertIdStrt);
 
 				while (!qVisit.empty())
 				{
-					Vertex::VERTEX_ID curVertId = qVisit.front();
+					Type::VERTEX_ID curVertId = qVisit.front();
 					qVisit.pop();
 					uint32_t curStep = vVisitStep[curVertId];
 
@@ -154,11 +154,11 @@ namespace MemGraph
 						thereIsPath = true;
 						break;
 					}
-					
 					const auto& curVertAdjEdgs = m_vVertices[curVertId]->GetToAdjVertices();
 
-					for (const Vertex::VERTEX_ID& nextVertId:  curVertAdjEdgs)
+					for (const auto& pEdge:  curVertAdjEdgs)
 					{
+						auto nextVertId = pEdge->GetVertexId();
 						if (m_vVertices[nextVertId]->HasLabel(label) && (vVisitStep[nextVertId] == 0))
 						{
 							qVisit.push(nextVertId);
@@ -176,7 +176,7 @@ namespace MemGraph
 			}
 			
 			vPath.resize(pathLength + 1);
-			Vertex::VERTEX_ID curVertId = vertIdEnd;
+			Type::VERTEX_ID curVertId = vertIdEnd;
 			uint32_t curStep = vVisitStep[curVertId];
 			for (int cnt = 0; cnt < pathLength; cnt++)
 			{

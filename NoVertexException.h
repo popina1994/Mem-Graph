@@ -8,7 +8,7 @@ namespace MemGraph
 
 		std::string m_errorMessage;
 	public:
-		NoVertexException(const Vertex::VERTEX_ID& vertId)
+		NoVertexException(const Type::VERTEX_ID& vertId)
 		{
 			m_errorMessage = "Vertex with" + std::to_string(vertId) + "id does not exist";
 		}
