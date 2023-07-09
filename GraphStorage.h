@@ -11,7 +11,7 @@
 
 namespace MemGraph
 {
-	/***
+	/**
 	* @brief Class that stores graphs. 
 	*/
 	class GraphStorage
@@ -63,6 +63,7 @@ namespace MemGraph
 		{
 			std::unique_ptr<Vertex> pVert = std::make_unique<Vertex>();
 			m_vVertices.emplace_back(std::move(pVert));
+
 			return m_vVertices.size() - 1;
 		}
 
@@ -114,11 +115,12 @@ namespace MemGraph
 		* @brief Returns the shortest path between two vertices @par vertIdStart and @par vertIdEnd such that vertices on the way contain @par lab. 
 		* @note Potential exception: std::bad_alloc, MemGraph::NoVertexException.
 		*/
-		std::vector<Type::VERTEX_ID> ShortestPath(const Type::VERTEX_ID& vertIdStrt, const Type::VERTEX_ID& vertIdEnd, 
+		std::vector<Type::VERTEX_ID> ShortestPath(
+			const Type::VERTEX_ID& vertIdStrt, 
+			const Type::VERTEX_ID& vertIdEnd, 
 			const Label& label, 
-			const ShortPathSearches& sps = ShortPathSearches::BFS) const
+			const ShortPathSearches& shortestPathSearch = ShortPathSearches::BFS) const
 		{
-			using namespace std::chrono;
 			std::vector<uint32_t> vVisitStep(m_vVertices.size(), 0);
 			std::vector<Type::VERTEX_ID> vPath;
 			std::vector<Type::VERTEX_ID> qVisit(m_vVertices.size(), -1);
@@ -136,7 +138,7 @@ namespace MemGraph
 				throw NoVertexException(vertIdEnd);
 			}
 
-			if (sps == ShortPathSearches::BFS)
+			if (shortestPathSearch == ShortPathSearches::BFS)
 			{
 				// Apply BFS to index the shortest distance of each node from the starting node. 
 				std::queue<Type::VERTEX_ID> qVisit;
@@ -150,13 +152,13 @@ namespace MemGraph
 
 					if ((curVertId == vertIdEnd) && (curStep != 0))
 					{
-						pathLength  = vVisitStep[vertIdEnd];
+						pathLength = vVisitStep[vertIdEnd];
 						thereIsPath = true;
 						break;
 					}
 					const auto& curVertAdjEdgs = m_vVertices[curVertId]->GetToAdjVertices();
 
-					for (const auto& pEdge:  curVertAdjEdgs)
+					for (const auto& pEdge : curVertAdjEdgs)
 					{
 						auto nextVertId = pEdge->GetVertexId();
 						if (m_vVertices[nextVertId]->HasLabel(label) && (vVisitStep[nextVertId] == 0))
@@ -168,30 +170,24 @@ namespace MemGraph
 					}
 				}
 				// Trace back the path.
+
+				if (!thereIsPath)
+				{
+					return {};
+				}
+
+				vPath.resize(pathLength + 1);
+				Type::VERTEX_ID curVertId = vertIdEnd;
+				uint32_t curStep = vVisitStep[curVertId];
+				for (int cnt = 0; cnt < pathLength; cnt++)
+				{
+					vPath[pathLength - cnt] = curVertId;
+					curVertId = vOrigVertex[curVertId];
+				}
+				vPath[0] = vertIdStrt;
 			}
 
- 			if (!thereIsPath)
-			{
-				return {};
-			}
-			
-			vPath.resize(pathLength + 1);
-			Type::VERTEX_ID curVertId = vertIdEnd;
-			uint32_t curStep = vVisitStep[curVertId];
-			for (int cnt = 0; cnt < pathLength; cnt++)
-			{
-				vPath[pathLength - cnt] = curVertId;
-				curVertId = vOrigVertex[curVertId];
-			}
-			vPath[0] = vertIdStrt;
-			
 			return vPath;
-		}
-
-		friend std::ostream& operator<<(std::ostream& out, const GraphStorage& gs)
-		{
-		
-			//for (const auto& gs.)
 		}
 	};
 

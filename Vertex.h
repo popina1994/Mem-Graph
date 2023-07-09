@@ -54,7 +54,6 @@ namespace MemGraph
 			m_vToAdjVertices.push_back(std::move(pEdge));
 		}
 
-
 		/**
 		* @brief Returns if the label @par label exists.
 		*/
@@ -77,7 +76,6 @@ namespace MemGraph
 			}
 		}
 
-			
 		/**
 		* @brief Gets all edges for which this vertex is pointing from.
 		*/

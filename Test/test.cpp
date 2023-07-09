@@ -2,7 +2,6 @@
 #include "../GraphStorage.h"
 #include <random>
 #include <chrono>
-
 TEST(TestingBasicFunctionality, BasicFunctionality) {
     using namespace MemGraph;
     GraphStorage gs;
@@ -154,7 +153,6 @@ TEST(TestingBasicFunctionality, SelfCycles) {
     EXPECT_EQ(v[2], 1);
     EXPECT_EQ(v[3], 2);
 }
-
 TEST(TestingBasicFunctionality, StressTestRequirement) {
     using namespace MemGraph;
     GraphStorage gs;
